@@ -73,7 +73,6 @@
 					<br>
 					<hr>
 
-				</div>
 			</div>
 
 			<div class="section">
@@ -98,41 +97,79 @@
 				  </div>
 				  <br>
 
-				  <div class="form-group">
+				  <div id="form-group">
 
 
-				  <div class="row">
-				   <div class="col-md-12">
-				   	<div class="alert alert-success"> Message sent! </div>
-				   	<div class="alert alert-danger"> Please fill everything out. </div>
-				   </div>
-				  </div>
+					  <div class="row">
+					   <div class="col-md-12">
+					   	<div class="alert alert-success" style="display:none" > Message sent! </div>
+					   	<div class="alert alert-danger" style="display:none"> There was an error with sending. </div>
+					   </div>
+					  </div>
 
-				     <label for="name">Name:</label>
-      				<input type="text" class="form-control" id="name">
-      			 <label for="email">Email:</label>
-      				<input type="text" class="form-control" id="email">
-  					<label for="comment">Comment:</label>
-  					<textarea class="form-control" rows="5" id="comment"></textarea>
-  					<br>
-  					<input type="submit" name="submit" id="submit" value="Send Message" class="btn btn-info pull-right">
-					</div>
-
-
+					     <label for="name">Name:</label>
+	      				<input type="text" class="form-control" id="name" placeholder="Enter your full name here">
+	      			 <label for="email">Email:</label>
+	      				<input type="text" class="form-control" id="email" placeholder="Enter your email address here">
+	  					<label for="comment">Comment:</label>
+	  					<textarea class="form-control" rows="5" id="comment"></textarea>
+	  					<br>
+	  					<input type="button" id="send" value="Send Message" class="btn btn-info pull-right">
 				 </div>
 
-			  </div>
 			</div>
 			<br>
-
-			<footer>
-			</footer>
 
 			<script src="smooth-scroll.js"></script>
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 			<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 			<script>
     		smoothScroll.init();
+
+    		$("#send").click(function()
+    		{
+	        var email = $("#email").val(); 
+	        var name = $("#name").val(); // get name field value
+	        var comment = $("#comment").val(); // get message field value
+	        $.ajax(
+	        {
+	            type: "POST",
+	            url: "https://mandrillapp.com/api/1.0/messages/send.json",
+	            data: {
+	                'key': 'gtnd7S2itCPJvJf101QcuA',
+	                'message': {
+	                    'from_email': email,
+	                    'from_name': name,
+	                    'headers': {
+	                        'Reply-To': email
+	                    },
+	                    'subject': 'Personal Site Message',
+	                    'text': comment,
+	                    'to': [
+	                    {
+	                        'email': 'wenli936@gmail.com',
+	                        'name': 'Wen',
+	                        'type': 'to'
+	                    }]
+	                }
+	            }
+	        })
+	        .done(function(response) {
+	            $(".alert-success").css("display","block"); // show success message
+	            $(".alert-danger").css("display","none");
+	            $("#name").val(''); // reset field after successful submission
+	            $("#email").val(''); // reset field after successful submission
+	            $("#comment").val(''); // reset field after successful submission
+	        })
+	        .fail(function(response) {
+	            $(".alert-danger").css("display","block");
+	            $(".alert-success").css("display","none");
+	            console.log(response);
+
+	        return false; // prevent page refresh
+	 			   });
+	      });
+
 			</script>
 
 		</body>
